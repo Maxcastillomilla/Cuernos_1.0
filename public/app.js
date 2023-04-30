@@ -2,57 +2,38 @@ import * as THREE from 'three'
 import { OrbitControls } from './jsm/controls/OrbitControls.js'
 import { GLTFLoader } from './jsm/loaders/GLTFLoader.js'
 
+/* import html2canvas from 'html2canvas'; */
 
 let entero = 'valor'
 
-
-/* export const myModule = {
-    foo: entero
-}; */
 let jsonMadera 
 let typematerial = document.getElementById('qualitymaterial')
 
-
-
 async function obtenerDatos() {
-  try {
-    const response = await fetch('/obtener');
-    const data = await response.json();
-    console.log(data);
-    console.log('lista de precios');
-    jsonMadera = data;
-    console.log(jsonMadera);
-    loadcuernos()   
-  } catch (error) {
-    console.error(error);
-    alert('No pudimos cargar la Lista de precios, intenta mas tarde')
+    try {
+      const response = await fetch('/obtener');
+      const data = await response.json();
+      console.log(data);
+      console.log('lista de precios');
+      jsonMadera = data;
+      console.log(jsonMadera);
+      loadcuernos()   
+    } catch (error) {
+      console.error(error);
+      alert('No pudimos cargar la Lista de precios, intenta mas tarde')
+    }
   }
-}
-
-obtenerDatos();
-
+  
+  obtenerDatos();
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//--------------------------------
 
 /**
  * Base
  */
 // Debug
-/* const gui = new dat.GUI() */ 
+/* const gui = new dat.GUI() */
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -60,23 +41,14 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 /* scene.background = new THREE.Color( 0xffffff ); */
-scene.background = new THREE.Color( 0x595d64 );
+/* scene.background = new THREE.Color( 0x21232a ); */
 
-function cambiocolor(){
-    
-    scene.background = new THREE.Color( backgroundcolor.value )
-
-}
 
 
 
 /**
  * Models
  */
-
-
-
-
 
 
 const gltfLoader = new GLTFLoader()
@@ -86,7 +58,22 @@ let mixer = null
 
 let metroscuadrados = 0
 
+const textureLoader = new THREE.TextureLoader()
+
+const doorHeightTexture = []
+doorHeightTexture[0] = textureLoader.load('https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/tallo/1mapaaltura.jpg')
+doorHeightTexture[1] = textureLoader.load('https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/tallo/1mapaaltura2.jpg')
+doorHeightTexture[2] = textureLoader.load('https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/tallo/1mapaaltura3.jpg')
+
+console.log(doorHeightTexture)
+
+
+
 //changes
+
+let altomm
+let anchomm
+
 const backgroundcolor = document.getElementById('color');
 backgroundcolor.addEventListener("change", () =>{
     cambiocolor() 
@@ -95,6 +82,32 @@ backgroundcolor.addEventListener("change", () =>{
     
     
 });
+
+
+
+
+const textura = document.getElementById('quality');
+textura.addEventListener("change", () =>{
+    loadcuernos() 
+    focus()
+    changetexture()
+
+    /* console.log(backgroundcolor.value) */
+    
+    
+});
+
+const imagenruta = ['https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/imagenes/SAMPLE.png','https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/imagenes/SAMPLE2.png','https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/imagenes/SAMPLE3.png']
+
+const imagetexture = document.getElementById('materialimage');
+const changetexture = ()=>{
+    imagetexture.src = imagenruta[textura.value]
+}
+
+
+
+
+
 
 
 const AlturaSlider = document.getElementById('myRange');
@@ -111,30 +124,8 @@ HorizontalSlider.addEventListener("change", () =>{
  
 });
 
-const Horizontaloffset = document.getElementById('myRange3');
-Horizontaloffset.addEventListener("change", () =>{
-
-    offsetH = Number(Horizontaloffset.value) 
-    console.log(offsetH)
-    loadcuernos() 
-    focus()
- 
-});
-
-
-const Verticaloffset = document.getElementById('myRange4');
-Verticaloffset.addEventListener("change", () =>{
-
-    offsetV = Number(Verticaloffset.value) 
-    console.log(offsetV)
-    loadcuernos() 
-    focus()
- 
-});
-
-
-
-typematerial.addEventListener("change", () =>{
+let size = document.getElementById('size')
+size.addEventListener("change", () =>{
     loadcuernos() 
     focus()
  
@@ -148,12 +139,41 @@ objetos.addEventListener("change", () =>{
 });
 
 
-let size = document.getElementById('size')
-size.addEventListener("change", () =>{
+
+
+typematerial.addEventListener("change", () =>{
     loadcuernos() 
     focus()
  
 });
+
+/* const Horizontaloffset = document.getElementById('myRange3');
+Horizontaloffset.addEventListener("change", () =>{
+
+    offsetH = Number(Horizontaloffset.value) 
+    console.log(offsetH)
+    loadcuernos() 
+    focus()
+ 
+}); */
+
+
+/* const Verticaloffset = document.getElementById('myRange4');
+Verticaloffset.addEventListener("change", () =>{
+
+    offsetV = Number(Verticaloffset.value) 
+    console.log(offsetV)
+    loadcuernos() 
+    focus()
+ 
+}); */
+
+
+
+
+
+
+//sprite
 
 
 function makeTextSprite( message, parameters )
@@ -190,33 +210,36 @@ function makeTextSprite( message, parameters )
 
 
 
-//material
 
 
 
-const loader = new THREE.TextureLoader();
-
-const pino = loader.load( 'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/79288a5366c588dbce91bf6e3e8eb1daea3cdc0a/mueble01/pino.png' );
-const lenga = loader.load( 'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/79288a5366c588dbce91bf6e3e8eb1daea3cdc0a/mueble01/lenga.png' );
-const haya = loader.load( 'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/79288a5366c588dbce91bf6e3e8eb1daea3cdc0a/mueble01/haya.png' );
 
 
-const Mvertical = [null,'p1.gltf', 'p2.gltf', 'p3.gltf', 'p4.gltf', 'p5.gltf', 'p6.gltf']
-const Mhorizontal = [null,'t1.gltf', 't2.gltf', 't3.gltf', 't4.gltf', 't5.gltf', 't6.gltf']
-const cables = ['inicio.gltf', 'final.gltf','inicio2.gltf', 'final2.gltf']
+
+
+
+
+
+const Mvertical = [null,null, 'p2.gltf', 'p3.gltf', 'p4.gltf', 'p5.gltf', 'p6.gltf']
+const Mhorizontal = [null,null, 'h2.gltf', 'h3.gltf', 'h4.gltf', 'h5.gltf', 'h6.gltf']
+const cablesa = [null,null, '2av.gltf', '3av.gltf','4av.gltf', '5av.gltf','6av.gltf']
+const cablesb = [null,null, '2bv.gltf', '3bv.gltf','4bv.gltf', '5bv.gltf','6bv.gltf']
 
 
 let palovertical = null
 let palohorizontal = null
 let thecable = null
+let thecabledos = null
 
 let typecable1 = []
+
 let typecable2 = []
 
-let distanciavertical = 4.9
-let offsetH = Number(Horizontaloffset.value) 
 
-let offsetV = Number(Verticaloffset.value)
+let distanciavertical = 4.9
+/* let offsetH = Number(Horizontaloffset.value)  */
+
+/* let offsetV = Number(Verticaloffset.value) */
 
 function esPar(numero) 
 { 
@@ -226,18 +249,21 @@ function esPar(numero)
 
 
 
-let materialcolor = [pino, lenga, haya]
+ 
 
+
+let materialcolor = [null, '#c8ae9c','#6a3d23']
 
 
 
 function loadcuernos(){
 
-    
-
     let precio = document.getElementById('precio')
 
+    /* precio.innerHTML = '$ ' + (100 * HorizontalSlider.value + 150 * AlturaSlider.value) */
     
+
+
 
     
     
@@ -249,17 +275,16 @@ function loadcuernos(){
     }
 
 
+    //lineas 
 
-     //lineas 
-
-     if (document.getElementById('size').checked) {
+    if (document.getElementById('size').checked) {
 
 
 
         let from = new THREE.Vector3(0, 0, 0);
 let to = new THREE.Vector3(0, 1, 0);
 
-let largoline = (Number(AlturaSlider.value)/2)*4.8
+let largoline = (Number(AlturaSlider.value)/2)*5.85
 
 let arrowHelper11 = new THREE.ArrowHelper(to.normalize(), from, largoline, 0xFFFFFF, 0.3, 0.3);
 let arrowHelper22 = new THREE.ArrowHelper(to.negate(), from, largoline, 0xFFFFFF, 0.3, 0.3);
@@ -269,7 +294,7 @@ arrowHelper22.name = 'Scene'
 scene.add( arrowHelper11, arrowHelper22 );  
 
 
-let positiony = 5.6*(Number(AlturaSlider.value)/2) +0.5
+let positiony = 5.4*(Number(AlturaSlider.value)/2)
 
 arrowHelper11.position.set(-3,positiony,0)
 arrowHelper22.position.set(-3,positiony,0)
@@ -281,7 +306,7 @@ arrowHelper22.position.set(-3,positiony,0)
 let from2 = new THREE.Vector3(0, 0, 0);
 let to2 = new THREE.Vector3(1, 0, 0);
 
-let largoline2 = (Number(HorizontalSlider.value)/2)*5.7
+let largoline2 = (Number(HorizontalSlider.value)/2)*6.45
 
 let arrowHelper33 = new THREE.ArrowHelper(to2.normalize(), from2, largoline2, 0xFFFFFF, 0.3, 0.3);
 let arrowHelper44 = new THREE.ArrowHelper(to2.negate(), from2, largoline2, 0xFFFFFF, 0.3, 0.3);
@@ -290,13 +315,45 @@ arrowHelper44.name = 'Scene'
             
 scene.add( arrowHelper33, arrowHelper44 );  
 
-let positionx = 4.85*(Number(HorizontalSlider.value)/2)
+let positionx = 6.35*(Number(HorizontalSlider.value)/2)
 
-arrowHelper33.position.set(positionx,0,4.2)
-arrowHelper44.position.set(positionx,0,4.2)
+arrowHelper33.position.set(positionx,0,7.5)
+arrowHelper44.position.set(positionx,0,7.5)
     
 
-let altomm = (123 + 30 + offsetV  * 2.25) + (318*AlturaSlider.value)
+// alturas y ancho
+
+
+switch (+HorizontalSlider.value) {
+    case 2:
+        anchomm = 1064
+        console.log('caso 2')
+      break;
+    case 3:
+        anchomm = 1432
+        console.log('caso 3')
+      break;
+    case 4:
+        anchomm = 1800
+        console.log('caso 4')
+      break;
+    case 5:
+        anchomm = 2167
+        console.log('caso 5')
+      break;
+    case 6:
+        anchomm = 2535
+        console.log('caso 6')
+        
+      break;
+    default:
+      // código a ejecutar si valor no está entre 2 y 6
+      break;
+  }
+
+
+
+altomm = (114) + (365*AlturaSlider.value)
 let spritey = makeTextSprite( altomm + " mm ", 
 		{ fontsize: 18, textColor: {r:255, g:255, b:255, a:1.0}} );
 	spritey.position.set(-5,positiony,0);
@@ -305,10 +362,14 @@ let spritey = makeTextSprite( altomm + " mm ",
 
 
 
-    let anchomm = (334*HorizontalSlider.value) + (2*(50+(10*offsetH)))
+
+
+
+
+    //anchomm = (115*2) + (367*HorizontalSlider.value)
     let spritey2 = makeTextSprite( anchomm + " mm ", 
 		{ fontsize: 18, textColor: {r:255, g:255, b:255, a:1.0}} );
-	spritey2.position.set(positionx,-0.01,9);
+	spritey2.position.set(positionx,-0.01,15);
     spritey2.name = 'Scene'
 	scene.add( spritey2 );
 
@@ -323,59 +384,35 @@ let spritey = makeTextSprite( altomm + " mm ",
 
 
 
-
-
+ 
 
 
 
     //vertical
     gltfLoader.load(
-        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble01/models/vertical/'+Mvertical[AlturaSlider.value],
+        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/models/patas/'+Mvertical[HorizontalSlider.value],
         (gltf) =>
         {
             gltf.scene.traverse( function ( node ) {
 
                 if ( node.isMesh || node.isLight ){
-                    
-                    
                     node.castShadow = true;
-                    let texture = materialcolor[typematerial.value] 
-                    texture.encoding = THREE.sRGBEncoding;
-                    texture.wrapS = THREE.RepeatWrapping;
-                    texture.wrapT = THREE.RepeatWrapping;
-
-                    
-
-// UVs use the convention that (0, 0) corresponds to the upper left corner of a texture.
-                    texture.flipY = false;
-                    node.material.map = texture
-                    
-                    
-                     
+                    node.material.color =  new THREE.Color(materialcolor[typematerial.value])
                 } 
-        
             } )
-            gltf.scene.scale.set(0.015, 0.015 + (0.0004 * offsetV / Number(AlturaSlider.value) ), 0.015)
+            gltf.scene.scale.set(0.015, 0.015, 0.015)
             palovertical = gltf.scene
             
             scene.add(palovertical)
 
 
-            for (let i = 1; i < Number(HorizontalSlider.value) + 1; i++) {
-                let clone = palovertical.clone()
-                let distance = distanciavertical * i
-                clone.position.set (distance,0,0)
-                scene.add(clone)
-
-
-
-             }
+        
         }
     )
     //horizontal
 
     gltfLoader.load(
-        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/7ed9c4e66446d83267b01583a2b06ee35fa21dab/mueble01/models/horizontal/'+Mhorizontal[HorizontalSlider.value],
+        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/models/horizontal/'+Mhorizontal[HorizontalSlider.value],
         (gltf) =>
         {
             
@@ -383,31 +420,49 @@ let spritey = makeTextSprite( altomm + " mm ",
 
                 if ( node.isMesh || node.isLight ){
                     node.castShadow = true;
-                    let texture = materialcolor[typematerial.value] 
-                    texture.encoding = THREE.sRGBEncoding;
-
-// UVs use the convention that (0, 0) corresponds to the upper left corner of a texture.
-                    texture.flipY = false;
-                    node.material.map = texture
-                    
-                    
+                    /* node.material.displacementMap = doorHeightTexture */
                 } 
+                if ( node.isMesh ){
+                    
+                    console.log("displaaaaa")
+
+                    node.material.displacementMap = doorHeightTexture[textura.value]
+                    //idea
+                    node.material.color =  new THREE.Color(materialcolor[typematerial.value])
+                    console.log(node.material.displacementMap)
+
+                    node.material.displacementMap.flipY = false
+                    if(textura.value == 2){
+                        node.material.displacementScale = 16
+                    } else{
+                        node.material.displacementScale = 16
+                    }
+                    
+                    
+
+                } 
+
+                
+                
             } )
 
 
-            gltf.scene.scale.set(0.015+(0.00052 * offsetH / Number(HorizontalSlider.value) ), 0.015, 0.015)
+            gltf.scene.scale.set(0.015, 0.015, 0.015)
+            
             palohorizontal = gltf.scene
-            gltf.scene.position.x += 2.45 * HorizontalSlider.value
+            palohorizontal.name = 'Scene'
+            
+            /* gltf.scene.position.x += 2.45 * HorizontalSlider.value */
             
             scene.add(palohorizontal)
 
 
             for (let i = 1; i < Number(AlturaSlider.value) + 1; i++) {
                 let clone = palohorizontal.clone()
-                let distance2 = 4.78 * i
+                let distance2 = 5.7 * i
                 
-                clone.position.set(0,distance2,0)
-                clone.position.x += 2.45 * HorizontalSlider.value
+                clone.position.y += 5.4 * i 
+                /* clone.position.x += 2.45 * HorizontalSlider.value */
                 scene.add(clone)
 
              }
@@ -415,285 +470,213 @@ let spritey = makeTextSprite( altomm + " mm ",
     )
 
 
-    //cables 1
-
-    gltfLoader.load(
-        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/7ed9c4e66446d83267b01583a2b06ee35fa21dab/mueble01/models/cable/'+cables[0],
-        (gltf) =>
-        {
-
-            gltf.scene.traverse( function ( node ) {
-
-                if ( node.isMesh || node.isLight ) node.castShadow = true;
-            } )
 
 
-            gltf.scene.scale.set(0.015, 0.015, 0.015)
-            thecable = gltf.scene
-            thecable.name = 'Scene'
-            gltf.scene.position.x += 2.385 
-            scene.add(thecable)
+//cables try
 
-            typecable1.push(thecable)
-
-
-            for (let i = 0; i < Number(HorizontalSlider.value); i++) {
-                let clone = thecable.clone()
-                let distance2 =+ distanciavertical * i
-                
-                clone.position.x += distance2 
-                /* clone.position.x +=  */
-                scene.add(clone)
-                typecable1.push(clone)
-
-                /* scene.add(typecable1) */
-                
-
-             }
-
-             console.log(typecable1)
-             console.log('aca')
-        }
-    )
+// parte 1
 
 
     gltfLoader.load(
-        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/7ed9c4e66446d83267b01583a2b06ee35fa21dab/mueble01/models/cable/'+cables[1],
+        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/models/ventana/'+cablesa[HorizontalSlider.value],
         (gltf) =>
         {
-
+            console.log("leeeeeeeeeee")
             gltf.scene.traverse( function ( node ) {
-
-                if ( node.isMesh || node.isLight ) node.castShadow = true;
+    
+                if ( node.isMesh || node.isLight ) {
+                    node.castShadow = true;
+                    node.material.opacity = 0.3;
+                }
             } )
-
-
             gltf.scene.scale.set(0.015, 0.015, 0.015)
             thecable = gltf.scene
             thecable.name = 'Scene'
-            gltf.scene.position.x +=  distanciavertical *  Number(HorizontalSlider.value) -2.38 
-            scene.add(thecable)
-
-            typecable1.push(thecable)
-
-        }
-        
-    )
-
-
-
-//cables2
-    gltfLoader.load(
-        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/7ed9c4e66446d83267b01583a2b06ee35fa21dab/mueble01/models/cable/'+cables[2],
-        (gltf) =>
-        {
-
-            gltf.scene.traverse( function ( node ) {
-
-                if ( node.isMesh || node.isLight ) node.castShadow = true;
-            } )
-
-
-
-            gltf.scene.scale.set(0.015, 0.015, 0.015)
-            thecable = gltf.scene
-            thecable.name = 'Scene'
-            gltf.scene.position.x += 2.385 
+            /* gltf.scene.position.x += 2.385  */
             /* scene.add(thecable) */
+    
+            typecable1 = []
+            typecable1.push(thecable)
+            
 
-            typecable2.push(thecable)
 
 
-            for (let i = 0; i < Number(HorizontalSlider.value); i++) {
-                let clone = thecable.clone()
-                let distance2 =+ distanciavertical * i
+
+
+            for (let i = 0; i < Number(AlturaSlider.value); i++) {
+                if(esPar(i)){
+                    typecable1.forEach(e =>{
+                        console.log(e)
+                        let clonefinal = e.clone()
+                        clonefinal.position.y += 5.4 * (i)
+                        scene.add(clonefinal)
+            
+                        console.log("xddddddddd")
                 
-                clone.position.x += distance2 
-                /* clone.position.x +=  */
-                /* scene.add(clone) */
-                typecable2.push(clone)
+                       }) 
+                }
+                else{
+                    console.log("nada1")
+                }      
+            }     
 
-                /* scene.add(typecable1) */
-                
 
-             }
 
-             console.log(typecable2)
-             console.log('aca 2')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
     )
+//parte 2
 
 
     gltfLoader.load(
-        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/7ed9c4e66446d83267b01583a2b06ee35fa21dab/mueble01/models/cable/'+cables[3],
+        'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/models/ventana/'+cablesb[HorizontalSlider.value],
         (gltf) =>
         {
-
-
             gltf.scene.traverse( function ( node ) {
-
-                if ( node.isMesh || node.isLight ) node.castShadow = true;
+    
+                if ( node.isMesh || node.isLight ){
+                    node.castShadow = true;
+                    node.material.opacity = 0.15;
+                } 
             } )
-
-
-
             gltf.scene.scale.set(0.015, 0.015, 0.015)
-            thecable = gltf.scene
-            thecable.name = 'Scene'
-            gltf.scene.position.x +=  distanciavertical *  Number(HorizontalSlider.value) -2.38 
-
-            
+            thecabledos = gltf.scene
+            thecabledos.name = 'Scene'
+            /* gltf.scene.position.x += 2.385  */
             /* scene.add(thecable) */
+            typecable2 = []
+            typecable2.push(thecabledos)
 
-            typecable2.push(thecable)
+
+
+
+
+            for (let i = 0; i < Number(AlturaSlider.value); i++) {
+                if(esPar(i)){
+                    console.log("nada2")
+                }
+                else{
+                    typecable2.forEach(e =>{
+                        console.log(e)
+                        let clonefinal = e.clone()
+                        clonefinal.position.y += 5.4 * (i)
+                        scene.add(clonefinal)
+                        console.log("xddddddddd22")
+                
+                       }) 
+                } 
+
+
+
+
+
 
         }
+        
+})
 
+
+
+if (document.getElementById('objetos').checked) {
+
+//figura
+
+let figura = null
+
+
+gltfLoader.load(
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble03/models/figura/scene.gltf',
+    (gltf) =>
+    {
+        
+        gltf.scene.traverse( function ( node ) {
+
+            if ( node.isMesh || node.isLight ){
+                node.castShadow = true;
+                /* node.material.displacementMap = doorHeightTexture */
+            }             
+        } )
+
+
+        gltf.scene.scale.set(0.22, 0.22, 0.22)
+        gltf.scene.rotation.set( 0, 2 * Math.PI * (90 / 360), 0 )
         
 
-
-    
-        
-    )
-
-
-
-
-
-
-
-
-
-
-
-// series de cable
-    
-    setTimeout(function(){
-       
-        
-
-        for (let i = 1; i < Number(AlturaSlider.value); i++) {
-            
-
-            if(esPar(i)){
-                typecable1.forEach(e =>{
-                    console.log(e)
-                    let clonefinal = e.clone()
-                    clonefinal.position.y += 4.78 * i
-                    scene.add(clonefinal)
-            
-                   }) 
-
-            }
-            else{
-                typecable2.forEach(e =>{
-                    console.log(e)
-                    let clonefinal = e.clone()
-                    clonefinal.position.y += 4.78 * i
-                    scene.add(clonefinal)
-            
-                   }) 
-            }
-
-            
-        
-               
-    
-        }
-           
-        
-
-
-    }, 400);
-
-
-
-
-
-    if (document.getElementById('objetos').checked) {
-
-        //figura
-        
-        let figura = null
-       
-        
-        gltfLoader.load(
-            'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble03/models/figura/scene.gltf',
-            (gltf) =>
-            {
-                
-                gltf.scene.traverse( function ( node ) {
-        
-                    if ( node.isMesh || node.isLight ){
-                        node.castShadow = true;
-                        /* node.material.displacementMap = doorHeightTexture */
-                    }             
-                } )
         
         
-                gltf.scene.scale.set(0.22, 0.22, 0.22)
-                gltf.scene.rotation.set( 0, 2 * Math.PI * (90 / 360), 0 )
-                
-        
-                
-                
-                figura = gltf.scene
-                figura.position.y += 6.65
-                figura.position.x += 2.2
-                figura.position.z += -0.8
-                figura.name = 'Scene'
-        
-                
-                
-                /* gltf.scene.position.x += 2.45 * HorizontalSlider.value */
-                
-                scene.add(figura)
-            }
-        )
+        figura = gltf.scene
+        figura.position.y += 6.9
+        figura.position.x += 4.5
+        figura.position.z += 2
+        figura.name = 'Scene'
+
         
         
-        //planta
+        /* gltf.scene.position.x += 2.45 * HorizontalSlider.value */
         
-        let planta = null
-        
-        
-        gltfLoader.load(
-            'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble03/models/plant/scene.gltf',
-            (gltf) =>
-            {
-                
-                gltf.scene.traverse( function ( node ) {
-        
-                    if ( node.isMesh || node.isLight ){
-                        node.castShadow = true;
-                        /* node.material.displacementMap = doorHeightTexture */
-                    }             
-                } )
-        
-        
-                gltf.scene.scale.set(13, 13, 13)
-                gltf.scene.rotation.set( 0, 2 * Math.PI * (90 / 360), 0 )
-                
-        
-                
-                
-                planta = gltf.scene
-                planta.position.y += 3.5
-                planta.position.x += 2.2
-                planta.position.z += 0
-                planta.name = 'Scene'
-        
-                
-                
-                /* gltf.scene.position.x += 2.45 * HorizontalSlider.value */
-                
-                scene.add(planta)
-            }
-        )
-        }
+        scene.add(figura)
+    }
+)
 
 
+//planta
 
+let planta = null
+
+
+gltfLoader.load(
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble03/models/plant/scene.gltf',
+    (gltf) =>
+    {
+        
+        gltf.scene.traverse( function ( node ) {
+
+            if ( node.isMesh || node.isLight ){
+                node.castShadow = true;
+                /* node.material.displacementMap = doorHeightTexture */
+            }             
+        } )
+
+
+        gltf.scene.scale.set(13, 13, 13)
+        gltf.scene.rotation.set( 0, 2 * Math.PI * (90 / 360), 0 )
+        
+
+        
+        
+        planta = gltf.scene
+        planta.position.y += 3.5
+        planta.position.x += 10.6
+        planta.position.z += 2
+        planta.name = 'Scene'
+
+        
+        
+        /* gltf.scene.position.x += 2.45 * HorizontalSlider.value */
+        
+        scene.add(planta)
+    }
+)
+}
+
+     
+     
 
 
     
@@ -702,19 +685,12 @@ let spritey = makeTextSprite( altomm + " mm ",
     typecable1 = []
     typecable2 = []
 
-    
 
 
-    let altomm = (123 + 30 + offsetV  * 2.25) + (318*AlturaSlider.value) 
-    let anchomm = (334*HorizontalSlider.value) + (2*(50+(10*offsetH)))
-    
-   // 286 
-    console.log(parseFloat(AlturaSlider.value) + 1)
+    let tablashorizontal = ((anchomm / 1000) * 0.31)*(parseFloat(AlturaSlider.value) + 1)
+    /* let tablasvertical = (0.05 * (altomm / 1000)) * 2 * (parseFloat(HorizontalSlider.value)+1) */
 
-    let tablashorizontal = ((anchomm / 1000) * 0.29)*(parseFloat(AlturaSlider.value) + 1)
-    let tablasvertical = (0.05 * (altomm / 1000)) * 2 * (parseFloat(HorizontalSlider.value)+1)
-
-    metroscuadrados = tablashorizontal + tablasvertical
+    metroscuadrados = tablashorizontal // + tablasvertical
     
       
     console.log('jsonmadera = ' + jsonMadera)
@@ -728,15 +704,12 @@ let spritey = makeTextSprite( altomm + " mm ",
 
     precio.innerHTML = '$ ' + entero.toLocaleString('es-MX')
 
-        /* console.log('$ a ver  ' + p29 * ( parseFloat(altomm) / 10 )* ( parseFloat(AlturaSlider) + 1)  + 5 * (parseFloat(altomm)/10) * 2 * (parseFloat(HorizontalSlider) + 1))) */
+
+     
 
 
 
- /*   document.getElementById('fff').innerHTML = `
 
-   <div id="paypal-button-container"></div>
-
-   ` */
 
 }
 
@@ -746,9 +719,7 @@ let spritey = makeTextSprite( altomm + " mm ",
 
 /* loadcuernos() */
 
-/* document.addEventListener('DOMContentLoaded', function() {
-    loadcuernos()
-}, false); */
+
 
 
 
@@ -827,7 +798,7 @@ window.addEventListener('resize', () =>
     // Update renderer
 
     renderer.setSize(sizes.width, sizes.height)
-    /* renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) */
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setPixelRatio(2)
     renderer.antialias= true 
     }, 100)
@@ -849,8 +820,6 @@ scene.add(camera)
 const controls = new OrbitControls(camera, canvas)
 controls.target.set(2.5 * Number(HorizontalSlider.value), 2.6 * Number(AlturaSlider.value) , 0)
 controls.enableDamping = true
-
-
 
 //angulo
 controls.maxPolarAngle = 2 * Math.PI * (90 / 360)
@@ -880,20 +849,42 @@ renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 /* renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) */
+//cambio
 renderer.setPixelRatio(2)
 renderer.alpha = true
 renderer.setClearColor( 0xffffff, 0);
 
 
 
-
 renderer.toneMapping = THREE.ACESFilmicToneMapping
-renderer.toneMappingExposure = 0.9
+renderer.toneMappingExposure = 2.5
+
+scene.background = new THREE.Color( backgroundcolor.value )
+
+function cambiocolor(){
+    
+    scene.background = new THREE.Color( backgroundcolor.value )
+
+}
+
+
+// ENVERIO 
+
+const cubeTextureLoader = new THREE.CubeTextureLoader()
+
+const environmentMap = cubeTextureLoader.load([
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/environmentMaps/4/px.png',
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/environmentMaps/4/nx.png',
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/environmentMaps/4/py.png',
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/environmentMaps/4/ny.png',
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/environmentMaps/4/pz.png',
+    'https://raw.githubusercontent.com/Maxcastillomilla/Mueblesasset/main/mueble02/textures/environmentMaps/4/nz.png'
+
+])
 
 
 
-
-/* document.getElementById('precio')= (10 * (HorizontalSlider.value + offsetH *0.1) + 20 * (AlturaSlider.value + offsetV *0.1)) */
+scene.environment = environmentMap
 
 
 
@@ -910,12 +901,56 @@ renderer.toneMappingExposure = 0.9
         renderer.toneMapping = Number(renderer.toneMapping)
         updateAllMaterials()
     })
+ */
+
+
+/* gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001) */
 
 
 
-gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001) */
+//pay
 
-const carrocompra = document.getElementById("carrocompra")
+
+let elementosdos = document.querySelectorAll('input')
+      
+     
+
+
+     
+// no se
+      /* for (let i = 0; i < elementosdos.length; i++) {
+
+         elementosdos[i].addEventListener("input", () =>{
+            document.getElementById('myrangevalue7').innerHTML = parseFloat(profundidad.value * 0.25).toFixed(2);
+
+    
+
+             document.getElementById('myrangevalue7').innerHTML += "M"
+             
+
+             document.getElementById('myrangevalue2').innerHTML = parseFloat(HorizontalSlider.value * 0.7).toFixed(2);
+    
+         document.getElementById('myrangevalue2').innerHTML += "M"
+
+         document.getElementById('myrangevalue').innerHTML = parseFloat(AlturaSlider.value * 0.7).toFixed(2);
+
+            document.getElementById('myrangevalue').innerHTML += "M"
+
+            document.getElementById('myrangevalue3').innerHTML = Number(Horizontaloffset.value) + 1
+
+            document.getElementById('myrangevalue4').innerHTML = Number(Verticaloffset.value) + 1
+
+         })
+    } */
+
+
+
+
+
+
+
+
+    const carrocompra = document.getElementById("carrocompra")
 const recuadro = document.getElementById("recuadro")
 
 
@@ -940,6 +975,9 @@ const submitmercado = () =>{
 }, 300);
   
 } 
+
+
+
 
 
 
@@ -980,19 +1018,3 @@ const tick = () =>
 }
 
 tick()
-
-
-// Agrega los listeners para los botones
-/* document.getElementById("obtener").addEventListener("click", function() {
-  fetch("/obtener")
-    .then(res => res.json())
-    .then(data => console.log("El color obtenido es " + data.color));
-});
-
-document.getElementById("generarpago").addEventListener("click", function() {
-
-  document.getElementById("precio").value = 7800;
-  let formulario = document.getElementById('formpago');
-  formulario.submit();
-
-}); */
